@@ -13,8 +13,8 @@ RUN npm install
 # 5. Copy the rest of your backend code
 COPY . .
 
-# 6. Open the port for our API
-EXPOSE 3000
+# Vite default port is 5173
+EXPOSE 5173
 
-# 7. Start the server (assuming you use nodemon for dev)
-# CMD ["npm", "run", "dev"]
+# We use --host 0.0.0.0 so the container can be reached from your Mac
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
