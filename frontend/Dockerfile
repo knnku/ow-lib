@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # 7. Start the server (assuming you use nodemon for dev)
-CMD ["npm", "start"]
+# CMD ["npm", "run", "dev"]

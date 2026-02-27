@@ -13,7 +13,7 @@ services:
 
   backend:
     build: ./backend
-    container_name: tf_api
+    container_name: owl_api
     ports:
       - "5000:5000"
     volumes:
