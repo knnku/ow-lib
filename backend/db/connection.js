@@ -21,4 +21,9 @@ pool.connect((err, client, release) => {
   }
   console.log('DB PSQL Connection Success!');
   release();
-})
+});
+
+
+module.exports = {
+  query: (text, params) => pool.query(text, params),
+};
