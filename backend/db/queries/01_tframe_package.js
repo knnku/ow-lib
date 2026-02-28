@@ -1,8 +1,8 @@
-const db = require('../connection')l;
+const db = require('../connection');
 
 
-//Get tframe data by tfframe package id
-const getTframePkgbyID =  (tframeData) {
+//Get tframe data by tframe package id
+const getTframePkgbyID =  (tframeData) => {
   const query = `SELECT * FROM tframe_package WHERE id = $1`;
   const data = [tframeData];
 
@@ -13,4 +13,6 @@ const getTframePkgbyID =  (tframeData) {
   })
 
 
-}
+};
+
+module.exports = [getTframePkgbyID];
