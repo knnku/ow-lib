@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getTframePkgbyID, getAllFrames } = require("../db/queries/01_tframe_package");
+const { getTframePkgbyID, getAllFrames } = require("../db/queries/tframes");
 
 
 // Main landing for now - get all framst and show as list in page
