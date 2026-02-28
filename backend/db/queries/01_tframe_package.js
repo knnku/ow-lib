@@ -9,7 +9,7 @@ const getTframePkgbyID =  (tframeData) {
 
   return db.query(query, values).then((data) => {
     console.log("db-query: ", data.rows);
-    return data.rows
+    return data.rows;
   })
 
 
