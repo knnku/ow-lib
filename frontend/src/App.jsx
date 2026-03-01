@@ -24,7 +24,7 @@ function App() {
             <Route path="/" element={<FrameList />} />
 
             {/* Specific Package Parts Page */}
-            <Route path="/parts/:id" element={<PartsList />} />
+            <Route path="/frames/:id/parts" element={<PartsList />} />
           </Routes>
         </main>
       </div>
