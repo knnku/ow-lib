@@ -21,7 +21,7 @@ const getAllFrames = () => {
   })
 }
 
-module.exports = [
+module.exports = {
   getTframePkgbyID,
   getAllFrames
-];
+};

@@ -7,8 +7,9 @@ const { getTframePkgbyID, getAllFrames } = require("../db/queries/tframes");
 // Main landing for now - get all framst and show as list in page
 router.get('/', async (req, res, next) => {
   try {
-    const getAll = await getAllFrames();
-    res.json(packages);
+    const allFrames = await getAllFrames();
+    res.json(allFrames);
+
   } catch (err) {
     next(err);
   }
