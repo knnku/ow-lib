@@ -6,7 +6,7 @@ const FrameList = () => {
 
   useEffect(() => {
     axios
-      .get("http://10.0.0.203:5000/api/packages")
+      .get("http://10.0.0.203:5000/api/frames")
       .then((res) => setFrames(res.data))
       .catch((err) => console.error(err));
   }, []);
@@ -21,7 +21,7 @@ const FrameList = () => {
     >
       <header style={{ marginBottom: "20px" }}>
         <h1 style={{ fontSize: "24px", fontWeight: "bold", color: "#333" }}>
-          Inventory
+          tframes
         </h1>
         <p style={{ color: "#666", fontSize: "14px" }}>
           {frames.length} Packages Found
