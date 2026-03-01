@@ -1,26 +1,43 @@
-import React, { useEffect } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import React, { useEffect, useRef } from "react";
+import { Html5QrcodeScanner } from "html5-qrcode";
 
-const scanner = ({ onScanSuccess, onClose }) => {
+const Scanner = ({ onScanSuccess, onClose }) => {
+  const scannerRef = useRef(null);
+
   useEffect(() => {
-    const scanner = new Html5QrcodeScanner("reader", {
-      fps: 10,
-      qrbox: { width: 250, height: 250 },
-      aspectRatio: 1.0,
-    });
+    // We use a small timeout to ensure the DOM element is fully painted
+    const timeout = setTimeout(() => {
+      const scanner = new Html5QrcodeScanner("reader", {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        // Important for mobile:
+        aspectRatio: 1.0,
+        rememberLastUsedCamera: true,
+        supportedScanTypes: [0], // 0 means camera only
+      });
 
-    scanner.render(
-      (decodedText) => {
-        scanner.clear(); // Stop camera after success
-        onScanSuccess(decodedText);
-      },
-      (error) => {
-        // We ignore minor scan errors to keep the log clean
-      },
-    );
-    return () => scanner.clear(); // Cleanup on unmount
-    
-  }, [])
+      scanner.render(
+        (decodedText) => {
+          scanner.clear();
+          onScanSuccess(decodedText);
+        },
+        (error) => {
+          /* ignore noisy logs */
+        },
+      );
+
+      scannerRef.current = scanner;
+    }, 100);
+
+    return () => {
+      clearTimeout(timeout);
+      if (scannerRef.current) {
+        scannerRef.current
+          .clear()
+          .catch((e) => console.error("Cleanup error", e));
+      }
+    };
+  }, []);
 
   return (
     <div
@@ -30,32 +47,55 @@ const scanner = ({ onScanSuccess, onClose }) => {
         left: 0,
         width: "100vw",
         height: "100vh",
-        backgroundColor: "rgba(0,0,0,0.9)",
-        zIndex: 1000,
+        backgroundColor: "#000",
+        zIndex: 10000,
         display: "flex",
         flexDirection: "column",
       }}
     >
-      <div style={{ padding: "20px", textAlign: "right" }}>
+      <div
+        style={{
+          padding: "20px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <span style={{ color: "white", fontWeight: "bold" }}>SCANNING...</span>
         <button
           onClick={onClose}
           style={{
             color: "white",
-            fontSize: "24px",
-            background: "none",
+            backgroundColor: "#444",
             border: "none",
+            padding: "8px 16px",
+            borderRadius: "8px",
+            fontSize: "16px",
           }}
         >
-          ✕
+          Close
         </button>
       </div>
-      <div id="reader" style={{ width: "100%" }}></div>
-      <div style={{ color: "white", textAlign: "center", marginTop: "20px" }}>
-        Align QR Code inside the square
+
+      {/* This DIV is what the scanner looks for */}
+      <div
+        id="reader"
+        style={{ width: "100%", backgroundColor: "black" }}
+      ></div>
+
+      <div
+        style={{
+          padding: "40px",
+          color: "#888",
+          textAlign: "center",
+          fontSize: "14px",
+        }}
+      >
+        Align the QR code inside the box to automatically identify the frame
+        bag.
       </div>
     </div>
   );
-
 };
 
 export default Scanner;

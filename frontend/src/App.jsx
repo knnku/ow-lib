@@ -13,7 +13,7 @@ function App() {
           textAlign: "center",
         }}
       >
-        <h1>OWL tframes🦉</h1>
+        <h1>ow library 🦉</h1>
       </header>
       <main>
         <FrameList />
