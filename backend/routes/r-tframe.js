@@ -15,7 +15,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id/parts', async (req, res, next) => {
   try {
     const frameData = await getTframePkgbyID(req.params.id);
     if (!frameData) {

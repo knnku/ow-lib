@@ -1,12 +1,12 @@
 const db = require('../connection');
 
 //Get tframe data by tframe package id
-const getTframePkgbyID = (tframeData) => {
-  const query = `SELECT * FROM tframe_package WHERE id = $1`;
-  const data = [tframeData];
+const getTframePkgbyID = (frameId) => {
+  const query = `SELECT * FROM parts_list WHERE tf_package_id = $1 ORDER BY part_uid ASC`;
+  const data = [frameId];
 
 
-  return db.query(query, values).then((data) => {
+  return db.query(query, data).then((data) => {
     console.log("db-query: ", data.rows);
     return data.rows;
   })

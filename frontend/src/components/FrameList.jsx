@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Scanner from "./Scanner";
 
@@ -6,6 +7,7 @@ const FrameList = () => {
   const [frames, setFrames] = useState([]);
   const [isScanning, setIsScanning] = useState(false);
   const [lastScanned, setLastScanned] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Make sure to use your Mac's IP address!
@@ -52,7 +54,6 @@ const FrameList = () => {
           boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
         }}
       >
-
         <button
           onClick={() => setIsScanning(true)}
           style={{
@@ -157,6 +158,10 @@ const FrameList = () => {
 
               {/* Large Mobile Button */}
               <button
+                onClick={() => {
+                  console.log("Button Clicked! Navigating to ID:", frame.tf_package_id);
+                  navigate(`/frames/${frame.tf_package_id}/parts`);
+                }}
                 style={{
                   marginTop: "10px",
                   width: "100%",
