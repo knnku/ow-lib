@@ -17,22 +17,17 @@ const FrameList = () => {
       .catch((err) => console.error(err));
   }, []);
 
-  const handleGlobalScan = (scannedCode) => {
+  const handleGlobalScan = (qrData) => {
+    console.log(`QR Scanned: ${qrData}`)
+
     // 🔍 Search our list for a frame matching the scanned QR code
     // Assuming your QR code contains the package name or a specific ID
-    const foundFrame = frames.find(
-      (f) =>
-        f.name === scannedCode || f.tf_package_id.toString() === scannedCode,
-    );
-
-    if (foundFrame) {
-      setLastScanned(foundFrame.tf_package_id);
-      alert(`Found: ${foundFrame.name}`);
-      // In the future, this is where we trigger the "Mark as Received" SQL
+    if (qrData.startsWith('ow-tf')) {
+      alert("Bag found! Loading parts...");
+      navigate(`/frames/${qrData}/parts`)
     } else {
-      alert(`Error: No frame matches code "${scannedCode}"`);
+      alert(`Error: No frame matches code "${qrData}"`);
     }
-
     setIsScanning(false);
   };
 
@@ -71,7 +66,7 @@ const FrameList = () => {
             gap: "10px",
           }}
         >
-          📷 SCAN FIND BAG
+          📷 FIND FRAME
         </button>
       </header>
 
