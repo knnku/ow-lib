@@ -1,6 +1,6 @@
 const db = require("../connection");
 
-
+// Query for scanning a part and updating to scanned
 const partScan = async (partUid) => {
   const query = `UPDATE parts_list SET status = 'scanned' WHERE part_uid = $1 RETURNING *`;
   const data = [partUid];
@@ -14,4 +14,4 @@ const partScan = async (partUid) => {
   }
 };
 
-module.exports = { partScan }
+module.exports = { partScan };
