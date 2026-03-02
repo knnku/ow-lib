@@ -20,9 +20,12 @@ app.use(cors());
 
 // Init route - keep 
 const frameRoutes = require('./routes/r-tframe');
+const partsRoutes = require("./routes/r-parts");
 
 // Route mount
 app.use('/api/frames', frameRoutes)
+app.use("/api/parts", partsRoutes);
+
 
 
 // DB access
