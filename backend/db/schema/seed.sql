@@ -6,12 +6,12 @@ VALUES
 -- tframe parts list seeds
 INSERT INTO parts_list(part_uid, tf_package_id, description, qr_code_photo, last_scanned_by, status)
 VALUES 
-('ow-tf-part-sqv-1', 'ow-tf-sqv-0000' ,'straight_35inch', 'placeholder.jpeg', 1, 'scanned'),
-('ow-tf-part-sqv-2', 'ow-tf-sqv-0000' , 'straight_20inch', 'placeholder.jpeg', 1, 'scanned'),
-('ow-tf-part-sqv-3', 'ow-tf-sqv-0000' , 'leg_holder', 'placeholder.jpeg', 1, 'scanned'),
-('ow-tf-part-sqv-4', 'ow-tf-sqv-0000' , 'foot_base', 'placeholder.jpeg', 1, 'scanned'),
-('ow-tf-part-sqv-5', 'ow-tf-sqv-0000' , 'corner_joint', 'placeholder.jpeg', 1, 'scanned'),
-('ow-tf-part-sqv-6', 'ow-tf-sqv-0000' , 'middle_holder', 'placeholder.jpeg', 1, 'scanned'),
-('ow-tf-part-sqv-7', 'ow-tf-sqv-0000' , 'screw', 'placeholder.jpeg', 1, 'scanned'),
-('ow-tf-part-sqv-8', 'ow-tf-sqv-0000' , 'top_straight', 'placeholder.jpeg', 1, 'scanned'),
-('ow-tf-part-sqv-10', 'ow-tf-sqv-0000' , 'top_straight', 'placeholder.jpeg', 1, 'scanned');
+('ow-tf-part-sqv-1', 'ow-tf-sqv-0000' ,'straight_35inch', 'placeholder.jpeg', 1, 'unscanned'),
+('ow-tf-part-sqv-2', 'ow-tf-sqv-0000' , 'straight_20inch', 'placeholder.jpeg', 1, 'unscanned'),
+('ow-tf-part-sqv-3', 'ow-tf-sqv-0000' , 'leg_holder', 'placeholder.jpeg', 1, 'unscanned'),
+('ow-tf-part-sqv-4', 'ow-tf-sqv-0000' , 'foot_base', 'placeholder.jpeg', 1, 'unscanned'),
+('ow-tf-part-sqv-5', 'ow-tf-sqv-0000' , 'corner_joint', 'placeholder.jpeg', 1, 'unscanned'),
+('ow-tf-part-sqv-6', 'ow-tf-sqv-0000' , 'middle_holder', 'placeholder.jpeg', 1, 'unscanned'),
+('ow-tf-part-sqv-7', 'ow-tf-sqv-0000' , 'screw', 'placeholder.jpeg', 1, 'unscanned'),
+('ow-tf-part-sqv-8', 'ow-tf-sqv-0000' , 'top_straight', 'placeholder.jpeg', 1, 'unscanned'),
+('ow-tf-part-sqv-9', 'ow-tf-sqv-0001' , 'top_straight', 'placeholder.jpeg', 1, 'unscanned');

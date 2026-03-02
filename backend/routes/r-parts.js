@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { partsScan } = require('../routes/r-parts');
+const { partsScan } = require('../db/queries/parts');
 
 
-router.put('scan/:id', async (req, res) => {
-  const { partData } = req.params.id;
+router.put('/scan/:id', async (req, res) => {
+  const partData = req.params.id;
   
   try {
-    const updatedRows = await partsScan(partData)
+    const updatedRows = await partsScan(partData);
 
     if (updatedRows === 0) {
       return req.status(400).json({
@@ -15,12 +15,12 @@ router.put('scan/:id', async (req, res) => {
         message: "Part ID not found in Database"
       });
     }
-  }
 
-  res.json({
-    success: true,
-    part: updatedRows[0]
-  });
+    res.json({
+      success: true,
+      part: updatedRows[0],
+    });
+  }
 
   catch (err) {
     console.error("Route error: ", err);
@@ -30,3 +30,6 @@ router.put('scan/:id', async (req, res) => {
     });
   }
 });
+
+
+module.exports = router;

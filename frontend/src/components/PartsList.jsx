@@ -19,6 +19,7 @@ const PartsList = () => {
   }, [id]);
 
   const markAsScanned = async (partUid) => {
+
     try {
       // Update Backend (Ensure this route exists in your Node.js index.js!)
       await axios.put(`http://10.0.0.203:5000/api/parts/scan/${partUid}`);
@@ -26,9 +27,13 @@ const PartsList = () => {
       // Update Frontend state immediately
       setParts((prevParts) =>
         prevParts.map((p) =>
-          p.part_uid === partUid ? { ...p, status: "scanned" } : p,
+          // Use .trim() just in case the scanner added a hidden space
+          p.part_uid.trim() === partUid.trim()
+            ? { ...p, status: "scanned" } // This MUST match 'scanned' exactly
+            : p,
         ),
       );
+
     } catch (err) {
       console.error("Error updating part status:", err);
       alert("Failed to save scan to database.");
@@ -36,6 +41,7 @@ const PartsList = () => {
   };
 
   const handlePartScan = (qrCode) => {
+    alert("Scanning: " + qrCode);
     // 1. Look for the part in our local state
     const partExists = parts.find((p) => p.part_uid === qrCode);
 
@@ -88,7 +94,7 @@ const PartsList = () => {
                 {part.description}
               </div>
             </div>
-            <span>{part.scanned ? "✅" : "📦"}</span>
+            <span>{part.status === 'scanned' ? "✅" : "📦"}</span>
           </div>
         ))}
       </div>
