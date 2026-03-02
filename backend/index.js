@@ -24,7 +24,7 @@ const partsRoutes = require("./routes/r-parts");
 
 // Route mount
 app.use('/api/frames', frameRoutes)
-app.use("/api/parts", partsRoutes);
+app.use('/api/parts', partsRoutes);
 
 
 
