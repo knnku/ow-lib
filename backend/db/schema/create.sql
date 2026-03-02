@@ -2,9 +2,12 @@ DROP TABLE IF EXISTS tframe_package CASCADE;
 DROP TABLE IF EXISTS parts_list CASCADE;
 DROP TABLE IF EXISTS tag_id CASCADE;
 
+-- CREATE SEQUENCE IF NOT EXISTS tf_package_id START 1;
+-- CREATE SEQUENCE IF NOT EXISTS tf_part_id START 1; 
+
 
 CREATE TABLE tframe_package (
-  tf_package_id BIGSERIAL PRIMARY KEY,
+  tf_package_id VARCHAR(255) PRIMARY KEY,
   name VARCHAR(255),
   frame_type VARCHAR(255),
   supplier VARCHAR(255),
@@ -17,7 +20,7 @@ CREATE TABLE tframe_package (
 
 CREATE TABLE parts_list (
   part_uid VARCHAR(255) PRIMARY KEY,
-  tf_package_id BIGINT references tframe_package(tf_package_id) ON DELETE CASCADE,
+  tf_package_id VARCHAR(255) references tframe_package(tf_package_id) ON DELETE CASCADE,
   description text default 'basic part',
   qr_code_photo text,
   last_scanned_by INTEGER,
