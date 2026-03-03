@@ -154,7 +154,10 @@ const FrameList = () => {
               {/* Large Mobile Button */}
               <button
                 onClick={() => {
-                  console.log("Button Clicked! Navigating to ID:", frame.tf_package_id);
+                  console.log(
+                    "Button Clicked! Navigating to ID:",
+                    frame.tf_package_id,
+                  );
                   navigate(`/frames/${frame.tf_package_id}/parts`);
                 }}
                 style={{
@@ -182,6 +185,7 @@ const FrameList = () => {
         <Scanner
           onScanSuccess={handleGlobalScan}
           onClose={() => setIsScanning(false)}
+          isLookup={true}
         />
       )}
     </div>

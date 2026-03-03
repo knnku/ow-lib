@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 
-const Scanner = ({ onScanSuccess, onClose, parts = [] }) => {
+const Scanner = ({ onScanSuccess, onClose, parts = [], bagId, isLookup = "false"}) => {
   const scannerRef = useRef(null);
   const lastScannedRef = useRef(null);
 
@@ -25,34 +25,41 @@ const Scanner = ({ onScanSuccess, onClose, parts = [] }) => {
         (decodedText) => {
           const cleanCode = decodedText.trim().toLowerCase();
 
-          // 2. Continuous Scan Logic: Only act if it's a NEW code
           if (lastScannedRef.current !== cleanCode) {
             lastScannedRef.current = cleanCode;
 
-            // Check if part belongs to this bag (passed in via props)
-            const isMatch = parts.some(
-              (p) => p.part_uid.toLowerCase() === cleanCode,
-            );
-
-            if (isMatch) {
+            // 🟢 FIX 2: Branch logic based on isLookup
+            if (isLookup) {
+              // We are in FrameList mode - just find a bag and go!
               successSound.current.play();
-              window.navigator.vibrate(100); // Pulse for success
-              onScanSuccess(cleanCode); // Update DB/State
+              window.navigator.vibrate(100);
+              onScanSuccess(cleanCode);
             } else {
-              errorSound.current.play();
-              window.navigator.vibrate([100, 50, 100]); // Double-buzz for error
-              alert(`Error: Part ${cleanCode} does not belong to this bag!`);
+              // We are in PartsList mode - strict checking
+              const isBagSelf = cleanCode === bagId?.toLowerCase();
+              const isPartMatch = parts.some(
+                (p) => p.part_uid.toLowerCase() === cleanCode,
+              );
+
+              if (isPartMatch) {
+                successSound.current.play();
+                window.navigator.vibrate(100);
+                onScanSuccess(cleanCode);
+              } else if (isBagSelf) {
+                console.log("Scanned current bag - ignoring.");
+              } else {
+                errorSound.current.play();
+                window.navigator.vibrate([100, 50, 100]);
+                alert(`Error: Part ${cleanCode} is not for this bag!`);
+              }
             }
 
-            // 3. Reset the "last scanned" after 2 seconds so they can scan it again if needed
             setTimeout(() => {
               lastScannedRef.current = null;
             }, 2000);
           }
         },
-        (error) => {
-          /* ignore */
-        },
+        (error) => {}
       );
 
       scannerRef.current = scanner;

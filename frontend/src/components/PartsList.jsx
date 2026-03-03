@@ -116,6 +116,7 @@ const PartsList = () => {
         >
           <Scanner
             parts={parts} 
+            bagId={id}
             onScanSuccess={handlePartScan}
             onClose={() => setIsScanning(false)}
           />
