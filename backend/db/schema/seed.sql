@@ -1,7 +1,8 @@
 -- Tframe package seeds
 INSERT INTO tframe_package(tf_package_id, name, frame_type, supplier, part_qty, photo, qr_code_photo, status, last_scanned_by)
 VALUES
-('ow-tf-sqv-0000', '10x3.3 Frame', 'Square Type - Vertical', 'Backdrop Source', 10, 'placeholder.jpg', 'placeholder.jpeg', 'new', 1);
+('ow-tf-sqv-0000', '10x3.3 Frame', 'Square Type - Vertical', 'Backdrop Source', 10, 'placeholder.jpg', 'placeholder.jpeg', 'new', 1),
+('ow-tf-sqv-0001', '10x3.3 Frame', 'Square Type - Horizontal', 'Backdrop Source', 10, 'placeholder.jpg', 'placeholder.jpeg', 'new', 1);
 
 -- tframe parts list seeds
 INSERT INTO parts_list(part_uid, tf_package_id, description, qr_code_photo, last_scanned_by, status)

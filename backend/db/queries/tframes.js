@@ -7,7 +7,7 @@ const getTframePkgbyID = (frameId) => {
 
 
   return db.query(query, data).then((data) => {
-    // console.log("db-query: ", data.rows);
+    console.log("db-query: ", data.rows);
     return data.rows;
   })
 
@@ -17,7 +17,7 @@ const getAllFrames = () => {
   const query = `SELECT * FROM tframe_package ORDER BY tf_package_id DESC`;
   
   return db.query(query).then((data) => {
-    // console.log("db-query", data.rows)
+    console.log("db-query", data.rows)
     return data.rows; // Return frame list
   })
 }

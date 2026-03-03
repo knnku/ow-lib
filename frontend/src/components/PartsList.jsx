@@ -80,12 +80,12 @@ const PartsList = () => {
             key={part.part_id}
             style={{
               padding: "15px",
-              backgroundColor: "white",
               borderRadius: "10px",
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
               borderLeft: part.scanned ? "5px solid green" : "5px solid #ccc",
+              backgroundColor: part.status === "scanned" ? "#00d833" : "white",
             }}
           >
             <div>
@@ -94,7 +94,7 @@ const PartsList = () => {
                 {part.description}
               </div>
             </div>
-            <span>{part.status === 'scanned' ? "✅" : "📦"}</span>
+            <span>"📦"</span>
           </div>
         ))}
       </div>
