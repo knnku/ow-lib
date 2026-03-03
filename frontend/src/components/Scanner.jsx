@@ -1,8 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 
-const Scanner = ({ onScanSuccess, onClose }) => {
+const Scanner = ({ onScanSuccess, onClose, parts = [] }) => {
   const scannerRef = useRef(null);
+  const lastScannedRef = useRef(null);
+
+  // AUdio files
+  const errorSound = useRef(new Audio('/scan-fail.mp3'));
+  const successSound = useRef(new Audio('/scan-success.mp3'));
 
   useEffect(() => {
     // We use a small timeout to ensure the DOM element is fully painted
@@ -18,11 +23,35 @@ const Scanner = ({ onScanSuccess, onClose }) => {
 
       scanner.render(
         (decodedText) => {
-          scanner.clear();
-          onScanSuccess(decodedText);
+          const cleanCode = decodedText.trim().toLowerCase();
+
+          // 2. Continuous Scan Logic: Only act if it's a NEW code
+          if (lastScannedRef.current !== cleanCode) {
+            lastScannedRef.current = cleanCode;
+
+            // Check if part belongs to this bag (passed in via props)
+            const isMatch = parts.some(
+              (p) => p.part_uid.toLowerCase() === cleanCode,
+            );
+
+            if (isMatch) {
+              successSound.current.play();
+              window.navigator.vibrate(100); // Pulse for success
+              onScanSuccess(cleanCode); // Update DB/State
+            } else {
+              errorSound.current.play();
+              window.navigator.vibrate([100, 50, 100]); // Double-buzz for error
+              alert(`Error: Part ${cleanCode} does not belong to this bag!`);
+            }
+
+            // 3. Reset the "last scanned" after 2 seconds so they can scan it again if needed
+            setTimeout(() => {
+              lastScannedRef.current = null;
+            }, 2000);
+          }
         },
         (error) => {
-          /* ignore noisy logs */
+          /* ignore */
         },
       );
 

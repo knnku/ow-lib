@@ -41,17 +41,17 @@ const PartsList = () => {
   };
 
   const handlePartScan = (qrCode) => {
-    alert("Scanning: " + qrCode);
+    // alert("Scanning: " + qrCode);
     // 1. Look for the part in our local state
     const partExists = parts.find((p) => p.part_uid === qrCode);
 
     if (partExists) {
       // 2. If it's the right part, update it!
       markAsScanned(qrCode);
-      setIsScanning(false); // Close camera after successful scan
-      alert(`Found: ${partExists.description}`);
+      // setIsScanning(false); // Close camera after successful scan
+      // alert(`Found: ${partExists.description}`);
     } else {
-      alert("This part doesn't belong to this bag!");
+      alert("Error with qr code or part");
     }
   };
 
@@ -115,6 +115,7 @@ const PartsList = () => {
           }}
         >
           <Scanner
+            parts={parts} 
             onScanSuccess={handlePartScan}
             onClose={() => setIsScanning(false)}
           />
