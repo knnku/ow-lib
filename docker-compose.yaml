@@ -21,19 +21,22 @@ services:
       - /app/node_modules
     environment:
       DATABASE_URL: postgres://admin:password@db:5432/owl_tf_db
+    command: node index.js
     depends_on:
       - db
 
   frontend:
     build: ./frontend
     container_name: owl_frontend
-    ports:
-      - "5173:5173"
     volumes:
       - ./frontend:/app
       - /app/node_modules
     stdin_open: true
     tty: true
+    ports:
+      - "0.0.0.0:5173:5173" # Explicitly bind to all network interfaces
+    environment:
+      - VITE_API_URL=http://192.168.1.185:5000 # Your Mac's IP
 
 volumes:
   pgdata:

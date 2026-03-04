@@ -12,8 +12,13 @@ const cors = require("cors");
 
 
 app.use(morgan('dev'));
-app.use(cors());
-
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"],
+  }),
+);
 // Serve images, stylesheets and js without routes - pre appended
 // app.use(express.static);
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 
-const Scanner = ({ onScanSuccess, onClose, parts = [], bagId, isLookup = "false"}) => {
+const Scanner = ({ onScanSuccess, onClose, parts = [], bagId, isLookup = false}) => {
   const scannerRef = useRef(null);
   const lastScannedRef = useRef(null);
 

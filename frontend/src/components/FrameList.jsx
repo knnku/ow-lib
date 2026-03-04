@@ -12,7 +12,7 @@ const FrameList = () => {
   useEffect(() => {
     // Make sure to use your Mac's IP address!
     axios
-      .get("http://10.0.0.203:5000/api/frames")
+      .get(`http://192.168.1.185:5000/api/frames`)
       .then((res) => setFrames(res.data))
       .catch((err) => console.error(err));
   }, []);

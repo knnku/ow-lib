@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host --clearScreen false ",
+    "dev": "vite --host 192.168.1.185 --clearScreen false ",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
