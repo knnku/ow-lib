@@ -12,17 +12,24 @@ const cors = require("cors");
 
 
 app.use(morgan('dev'));
-app.use(cors());
-
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"],
+  }),
+);
 // Serve images, stylesheets and js without routes - pre appended
 // app.use(express.static);
 
 
 // Init route - keep 
 const frameRoutes = require('./routes/r-tframe');
+const partsRoutes = require('./routes/r-parts');
 
 // Route mount
-app.use('/api/frames', frameRoutes)
+app.use('/api/frames', frameRoutes);
+app.use('/api/parts', partsRoutes);
 
 
 // DB access
@@ -61,6 +68,6 @@ app.use((err, req, res, next) => {
 })
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log("Backend listening on port 5000");
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Backend listening on port ${PORT}`);
 });
