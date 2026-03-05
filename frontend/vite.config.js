@@ -8,8 +8,18 @@ export default defineConfig({
     host: "0.0.0.0", // Listen on all local IPs
     port: 5173,
     strictPort: true,
+    allowedHosts: true,
     hmr: {
-      host: "192.168.1.185", // Tells your phone's browser where to find the HMR websocket
+      protocol: "wss", // Force Secure Web Sockets
+      host: "economical-marcie-pardonably.ngrok-free.dev",
+      clientPort: 443,
+    },
+    proxy: {
+      "/api": {
+        target: "http://backend:5000", // Uses Docker's internal network to find your API
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 });

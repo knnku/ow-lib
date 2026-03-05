@@ -13,7 +13,7 @@ const PartsList = () => {
   useEffect(() => {
     // Fetch parts for this specific package
     axios
-      .get(`http://192.168.1.185:5000/api/frames/${id}/parts`)
+      .get(`/api/frames/${id}/parts`)
       .then((res) => setParts(res.data))
       .catch((err) => console.error(err));
   }, [id]);
@@ -22,7 +22,7 @@ const PartsList = () => {
 
     try {
       // Update Backend (Ensure this route exists in your Node.js index.js!)
-      await axios.put(`http://192.168.1.185:5000/api/parts/scan/${partUid}`);
+      await axios.put(`/api/parts/scan/${partUid}`);
 
       // Update Frontend state immediately
       setParts((prevParts) =>

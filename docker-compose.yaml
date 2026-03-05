@@ -9,7 +9,12 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data,
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d owl_tf_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   backend:
     build: ./backend
@@ -23,7 +28,8 @@ services:
       DATABASE_URL: postgres://admin:password@db:5432/owl_tf_db
     command: node index.js
     depends_on:
-      - db
+      db:
+        condition: service_healthy # This forces the API to wait for the pulse!
 
   frontend:
     build: ./frontend
@@ -35,8 +41,9 @@ services:
     tty: true
     ports:
       - "0.0.0.0:5173:5173" # Explicitly bind to all network interfaces
-    environment:
-      - VITE_API_URL=http://192.168.1.185:5000 # Your Mac's IP
+    # connection stuff
+    # environment: 
+    #   - VITE_API_URL=http://10.0.0.203:5000 # Your Mac's IP
 
 volumes:
   pgdata:

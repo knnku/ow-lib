@@ -6,13 +6,13 @@ import Scanner from "./Scanner";
 const FrameList = () => {
   const [frames, setFrames] = useState([]);
   const [isScanning, setIsScanning] = useState(false);
-  const [lastScanned, setLastScanned] = useState(null);
+  // const [lastScanned, setLastScanned] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Make sure to use your Mac's IP address!
     axios
-      .get(`http://192.168.1.185:5000/api/frames`)
+      .get(`/api/frames`)
       .then((res) => setFrames(res.data))
       .catch((err) => console.error(err));
   }, []);
