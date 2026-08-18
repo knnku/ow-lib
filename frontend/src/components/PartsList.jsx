@@ -8,7 +8,7 @@ const PartsList = () => {
   const navigate = useNavigate();
   const [parts, setParts] = useState([]);
   // const [packageName, setPackageName] = useState("");
-  const [isScanning, setIsScanning] = useState(false);
+  // const [isScanning, setIsScanning] = useState(false); <=== main scanner link(depreciated for rfid)
 
   useEffect(() => {
     // Fetch parts for this specific package
@@ -17,43 +17,6 @@ const PartsList = () => {
       .then((res) => setParts(res.data))
       .catch((err) => console.error(err));
   }, [id]);
-
-  const markAsScanned = async (partUid) => {
-
-    try {
-      // Update Backend (Ensure this route exists in your Node.js index.js!)
-      await axios.put(`/api/parts/scan/${partUid}`);
-
-      // Update Frontend state immediately
-      setParts((prevParts) =>
-        prevParts.map((p) =>
-          // Use .trim() just in case the scanner added a hidden space
-          p.part_uid.trim() === partUid.trim()
-            ? { ...p, status: "scanned" } // This MUST match 'scanned' exactly
-            : p,
-        ),
-      );
-
-    } catch (err) {
-      console.error("Error updating part status:", err);
-      alert("Failed to save scan to database.");
-    }
-  };
-
-  const handlePartScan = (qrCode) => {
-    // alert("Scanning: " + qrCode);
-    // 1. Look for the part in our local state
-    const partExists = parts.find((p) => p.part_uid === qrCode);
-
-    if (partExists) {
-      // 2. If it's the right part, update it!
-      markAsScanned(qrCode);
-      // setIsScanning(false); // Close camera after successful scan
-      // alert(`Found: ${partExists.description}`);
-    } else {
-      alert("Error with qr code or part");
-    }
-  };
 
   return (
     <div style={{ padding: "15px" }}>
@@ -65,7 +28,7 @@ const PartsList = () => {
         <h2>Parts List</h2>
         {/* Image/Icon Button to trigger camera */}
         <button
-          onClick={() => setIsScanning(!isScanning)}
+          // onClick={() => setIsScanning(!isScanning)}
           className="scan-trigger"
         >
           SCAN
@@ -98,43 +61,7 @@ const PartsList = () => {
           </div>
         ))}
       </div>
-      {isScanning ? (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            backgroundColor: "rgba(0,0,0,0.8)",
-            zIndex: 1000,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Scanner
-            parts={parts} 
-            bagId={id}
-            onScanSuccess={handlePartScan}
-            onClose={() => setIsScanning(false)}
-          />
-          <button
-            onClick={() => setIsScanning(false)}
-            style={{
-              marginTop: "20px",
-              padding: "10px 20px",
-              backgroundColor: "red",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-            }}
-          >
-            CLOSE CAMERA
-          </button>
-        </div>
-      ) : null}
+
     </div>
   );
 };

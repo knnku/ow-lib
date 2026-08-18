@@ -5,7 +5,7 @@ import Scanner from "./Scanner";
 
 const FrameList = () => {
   const [frames, setFrames] = useState([]);
-  const [isScanning, setIsScanning] = useState(false);
+  // const [isScanning, setIsScanning] = useState(false); <== main scanner link (deprecated for rfid)
   // const [lastScanned, setLastScanned] = useState(null);
   const navigate = useNavigate();
 
@@ -16,20 +16,6 @@ const FrameList = () => {
       .then((res) => setFrames(res.data))
       .catch((err) => console.error(err));
   }, []);
-
-  const handleGlobalScan = (qrData) => {
-    console.log(`QR Scanned: ${qrData}`)
-
-    // 🔍 Search our list for a frame matching the scanned QR code
-    // Assuming your QR code contains the package name or a specific ID
-    if (qrData.startsWith('ow-tf')) {
-      alert("Bag found! Loading parts...");
-      navigate(`/frames/${qrData}/parts`)
-    } else {
-      alert(`Error: No frame matches code "${qrData}"`);
-    }
-    setIsScanning(false);
-  };
 
   return (
     <div
@@ -50,7 +36,7 @@ const FrameList = () => {
         }}
       >
         <button
-          onClick={() => setIsScanning(true)}
+          // onClick={() => setIsScanning(true)}
           style={{
             width: "100%",
             padding: "16px",
@@ -66,7 +52,7 @@ const FrameList = () => {
             gap: "10px",
           }}
         >
-          📷 FIND FRAME
+          SCAN
         </button>
       </header>
 
@@ -180,14 +166,7 @@ const FrameList = () => {
         </div>
       </div>
 
-      {/* Scanner Overlay */}
-      {isScanning && (
-        <Scanner
-          onScanSuccess={handleGlobalScan}
-          onClose={() => setIsScanning(false)}
-          isLookup={true}
-        />
-      )}
+  
     </div>
   );
 };
