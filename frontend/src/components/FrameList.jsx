@@ -1,21 +1,90 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Scanner from "./Scanner";
 
 const FrameList = () => {
   const [frames, setFrames] = useState([]);
-  // const [isScanning, setIsScanning] = useState(false); <== main scanner link (deprecated for rfid)
-  // const [lastScanned, setLastScanned] = useState(null);
   const navigate = useNavigate();
 
+  const [scanStatus, setScanStatus] = useState({
+    message: "Ready for scan",
+    isError: false,
+  }); //rfid
+  
+  // Buffer ref to collect fast HID keystrokes without causing re-renders
+  const keystrokeBuffer = useRef("");
+
   useEffect(() => {
-    // Make sure to use your Mac's IP address!
     axios
       .get(`/api/frames`)
       .then((res) => setFrames(res.data))
-      .catch((err) => console.error(err));
+      .catch((err) =>
+        console.error("Error fetching frame data from backend: ", err),
+      );
   }, []);
+ 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ignore keystrokes if the user happens to type into a regular text input or textarea
+      if (["INPUT", "TEXTAREA"].includes(e.target.tagName)) return;
+
+      if (e.key === "Enter") {
+        const scannedTag = keystrokeBuffer.current.trim();
+        keystrokeBuffer.current = ""; // Reset buffer immediately
+
+        if (scannedTag.length > 0) {
+          handleFrameScan(scannedTag);
+        }
+      } else if (e.key.length === 1) {
+        // Accumulate alphanumeric characters from the reader
+        keystrokeBuffer.current += e.key;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [frames]);
+
+  const handleFrameScan = (scannedEpc) => {
+    setScanStatus({ message: `Scanned: ${scannedEpc}`, isError: false });
+
+    // Match against loaded frames (checking rfid_tag or polymorphic epc field)
+    const matchedFrame = frames.find(
+      (f) =>
+        f.epc === scannedEpc ||
+        f.rfid_tag_id === scannedEpc ||
+        f.tf_package_id === scannedEpc,
+    );
+
+    if (matchedFrame) {
+      setScanStatus({
+        message: `Matched Frame: ${matchedFrame.name}`,
+        isError: false,
+      });
+      navigate(`/frames/${matchedFrame.tf_package_id}/parts`);
+    } else {
+      // Fallback: Query backend directly if tags are resolved via an RFID route
+      axios
+        .get(`/api/rfid/resolve/${scannedEpc}`)
+        .then((res) => {
+          if (res.data && res.data.entity_type === "FRAME") {
+            navigate(`/frames/${res.data.entity_id}/parts`);
+          } else {
+            setScanStatus({
+              message: `Tag ${scannedEpc} is not a valid frame tag`,
+              isError: true,
+            });
+          }
+        })
+        .catch(() => {
+          setScanStatus({
+            message: `Frame tag not found (${scannedEpc})`,
+            isError: true,
+          });
+        });
+    }
+  };
 
   return (
     <div
@@ -165,10 +234,8 @@ const FrameList = () => {
           ))}
         </div>
       </div>
-
-  
     </div>
   );
-};
+};;
 
 export default FrameList;
