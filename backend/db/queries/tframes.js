@@ -24,6 +24,6 @@ const getAllFrames = () => {
 }
 
 module.exports = {
-  getTframePkgbyID,
+  getFramePkgByEPC,
   getAllFrames
 };
