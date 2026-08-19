@@ -1,7 +1,7 @@
 const db = require('../connection');
 
-//Get tframe data by tframe package id
-const getTframePkgbyID = (frameId) => {
+//Get tension frame package by RFID EPC ID
+const getFramePkgByEPC = (frameId) => {
   const query = `SELECT * FROM parts_list WHERE tf_package_id = $1 ORDER BY part_uid ASC`;
   const data = [frameId];
 
@@ -13,6 +13,7 @@ const getTframePkgbyID = (frameId) => {
 
 };
 
+//Get all Frames
 const getAllFrames = () => {
   const query = `SELECT * FROM tframe_package ORDER BY tf_package_id DESC`;
   

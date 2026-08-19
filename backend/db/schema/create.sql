@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS tframe_package CASCADE;
 DROP TABLE IF EXISTS parts_list CASCADE;
-DROP TABLE IF EXISTS tag_id CASCADE;
+DROP TABLE IF EXISTS rfid_tags CASCADE;
+
 
 -- CREATE SEQUENCE IF NOT EXISTS tf_package_id START 1;
 -- CREATE SEQUENCE IF NOT EXISTS tf_part_id START 1; 
@@ -27,9 +28,10 @@ CREATE TABLE parts_list (
   status VARCHAR(255)
 );
 
-CREATE table tag_id (
+CREATE table rfid_tags (
   tag_id SERIAL PRIMARY KEY,
-  event_id INTEGER,
-  time_date timestamp,
-  last_scanned_by INTEGER
+  epc_id INTEGER,
+  status VARCHAR default 'active',
+  entity_id INTEGER,
+  entity_type VARCHAR
 );

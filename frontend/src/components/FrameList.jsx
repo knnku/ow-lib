@@ -46,6 +46,7 @@ const FrameList = () => {
   }, [frames]);
 
   const handleFrameScan = (scannedEpc) => {
+    console.log(`RFID EPC Scanned: ${scannedEpc}`);
     setScanStatus({ message: `Scanned: ${scannedEpc}`, isError: false });
 
     // Match against loaded frames (checking rfid_tag or polymorphic epc field)
@@ -55,6 +56,8 @@ const FrameList = () => {
         f.rfid_tag_id === scannedEpc ||
         f.tf_package_id === scannedEpc,
     );
+
+    console.log(`matched frame??: ${matchedFrame}`)
 
     if (matchedFrame) {
       setScanStatus({
