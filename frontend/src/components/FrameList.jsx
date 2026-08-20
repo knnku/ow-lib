@@ -4,7 +4,7 @@ import axios from "axios";
 
 const FrameList = () => {
   // Frame List state
-  const [frames, getFrames] = useState([]);
+  const [frameList, getFrameList] = useState([]);
   const navigate = useNavigate();
 
   // Frame Status State
@@ -19,7 +19,7 @@ const FrameList = () => {
   useEffect(() => {
     axios
       .get(`/api/frames`)
-      .then((res) => setFrames(res.data))
+      .then((res) => getFrameList(res.data))
       .catch((err) =>
         console.error("Error fetching frame data from backend: ", err),
       );
@@ -51,7 +51,7 @@ const FrameList = () => {
     console.log(`RFID EPC Scanned: ${scannedEpc}`);
 
     // ??
-    setScanStatus({ message: `Scanned: ${scannedEpc}`, isError: false });
+    setFrameStatus({ message: `Scanned: ${scannedEpc}`, isError: false });
 
     // Match against loaded frames (checking rfid_tag or polymorphic epc field)
     const matchedFrame = frames.find(
@@ -64,7 +64,7 @@ const FrameList = () => {
     console.log(`matched frame??: ${matchedFrame}`)
 
     if (matchedFrame) {
-      setScanStatus({
+      setFrameStatus({
         message: `Matched Frame: ${matchedFrame.name}`,
         isError: false,
       });
@@ -77,14 +77,14 @@ const FrameList = () => {
           if (res.data && res.data.entity_type === "FRAME") {
             navigate(`/frames/${res.data.entity_id}/parts`);
           } else {
-            setScanStatus({
+            setFrameStatus({
               message: `Tag ${scannedEpc} is not a valid frame tag`,
               isError: true,
             });
           }
         })
         .catch(() => {
-          setScanStatus({
+          setFrameStatus({
             message: `Frame tag not found (${scannedEpc})`,
             isError: true,
           });
@@ -145,13 +145,13 @@ const FrameList = () => {
             Inventory
           </h1>
           <p style={{ color: "#666", fontSize: "14px" }}>
-            {frames.length} Packages Found
+            {frameList.length} Packages Found
           </p>
         </header>
 
         {/* Vertical Stack for Mobile */}
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          {frames.map((frame) => (
+          {frameList.map((frame) => (
             <div
               key={frame.tf_package_id}
               style={{
@@ -216,7 +216,7 @@ const FrameList = () => {
               <button
                 onClick={() => {
                   console.log(
-                    "Button Clicked! Navigating to ID:",
+                    "Frame selected. Navigating to Frame ID:",
                     frame.tf_package_id,
                   );
                   navigate(`/frames/${frame.tf_package_id}/parts`);
