@@ -14,13 +14,13 @@ CREATE TABLE tframe_package (
   supplier VARCHAR(255),
   part_qty INTEGER,
   photo text,
-  status VARCHAR(255),
+  status VARCHAR(255)
 );
 
 CREATE TABLE parts_list (
-  part_uid VARCHAR(255) PRIMARY KEY,
+  part_id VARCHAR(255) PRIMARY KEY,
   tf_package_id VARCHAR(255) references tframe_package(tf_package_id) ON DELETE CASCADE,
-  description text default 'basic part',,
+  description text default 'basic part',
   status VARCHAR(255)
 );
 
@@ -28,6 +28,6 @@ CREATE table rfid_tags (
   tag_id SERIAL PRIMARY KEY,
   epc_id VARCHAR,
   status VARCHAR default 'active',
-  entity_id INTEGER,
+  entity_id VARCHAR,
   entity_type VARCHAR
 );

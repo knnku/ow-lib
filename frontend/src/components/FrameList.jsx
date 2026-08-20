@@ -3,13 +3,15 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const FrameList = () => {
-  const [frames, setFrames] = useState([]);
+  // Frame List state
+  const [frames, getFrames] = useState([]);
   const navigate = useNavigate();
 
-  const [scanStatus, setScanStatus] = useState({
+  // Frame Status State
+  const [frameStatus, setFrameStatus] = useState({
     message: "Ready for scan",
     isError: false,
-  }); //rfid
+  }); 
   
   // Buffer ref to collect fast HID keystrokes without causing re-renders
   const keystrokeBuffer = useRef("");
@@ -47,6 +49,8 @@ const FrameList = () => {
 
   const handleFrameScan = (scannedEpc) => {
     console.log(`RFID EPC Scanned: ${scannedEpc}`);
+
+    // ??
     setScanStatus({ message: `Scanned: ${scannedEpc}`, isError: false });
 
     // Match against loaded frames (checking rfid_tag or polymorphic epc field)
@@ -68,7 +72,7 @@ const FrameList = () => {
     } else {
       // Fallback: Query backend directly if tags are resolved via an RFID route
       axios
-        .get(`/api/rfid/resolve/${scannedEpc}`)
+        .get(`/api/frame/${scannedEpc}`)
         .then((res) => {
           if (res.data && res.data.entity_type === "FRAME") {
             navigate(`/frames/${res.data.entity_id}/parts`);

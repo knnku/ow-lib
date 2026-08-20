@@ -1,9 +1,15 @@
 const db = require('../connection');
 
 //Get tension frame package by RFID EPC ID
-const getFramePkgByEPC = (frameId) => {
-  const query = `SELECT * FROM parts_list WHERE tf_package_id = $1 ORDER BY part_uid ASC`;
-  const data = [frameId];
+const getFramePkgByEPC = (epcId) => {
+  const query = `SELECT 
+                  tfp.*, rt.epc_id
+                FROM tframe_package tfp
+                JOIN rfid_tags rt
+                  ON tfp.tf_package_id = rt.entity_id
+                WHERE rt.epc_id = $1
+                AND entity_type = 'frame'`;
+  const data = [epcId];
 
 
   return db.query(query, data).then((data) => {

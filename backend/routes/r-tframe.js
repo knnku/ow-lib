@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const { getTframePkgbyID, getAllFrames } = require("../db/queries/tframes");
+const { getFramePkgByEPC, getAllFrames } = require("../db/queries/tframes");
 
 
-// Main landing for now - get all framst and show as list in page
+// Get all frames
 router.get('/', async (req, res, next) => {
   try {
     const allFrames = await getAllFrames();
@@ -15,17 +15,23 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id/parts', async (req, res, next) => {
+
+// Get parts for frame
+router.get('/:epc/parts', async (req, res, next) => {
+  // Test
+  console.log("Route request for frame!")
+  console.log("Request: ", req.params);
+
   try {
-    const frameData = await getTframePkgbyID(req.params.id);
+    const frameData = await getFramePkgByEPC(req.params.epc);
     if (!frameData) {
-      return res.status(404).json({error: "Tension Frame ID not found!"})
+      return res.status(404).json({error: "Frame ID not found!"})
     }
     res.json(frameData);
   } catch (err) {
     next(err);
   }
-})
+});
 
 
 

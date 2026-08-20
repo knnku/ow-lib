@@ -3,7 +3,7 @@ const router = express.Router();
 const { partsScan } = require('../db/queries/parts');
 
 
-//
+// Part Scan
 router.put('/scan/:id', async (req, res) => {
   const partData = req.params.id;
   
