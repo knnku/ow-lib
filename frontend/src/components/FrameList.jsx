@@ -48,48 +48,66 @@ const FrameList = () => {
   }, [frames]);
 
   const handleFrameScan = (scannedEpc) => {
-    console.log(`RFID EPC Scanned: ${scannedEpc}`);
+    const cleanEpc = scannedEpc.trim();
+    console.log(`RFID EPC Scanned: ${cleanEpc}`);
 
-    // ??
-    setFrameStatus({ message: `Scanned: ${scannedEpc}`, isError: false });
+    setFrameStatus({
+      message: `Resolving tag: ${cleanEpc}...`,
+      isError: false,
+    });
 
-    // Match against loaded frames (checking rfid_tag or polymorphic epc field)
+    // 1. Check local state (matching by epc_id or direct package id)
     const matchedFrame = frames.find(
       (f) =>
-        f.epc === scannedEpc ||
-        f.rfid_tag_id === scannedEpc ||
-        f.tf_package_id === scannedEpc,
+        (f.epc_id &&
+          f.epc_id.trim().toUpperCase() === cleanEpc.toUpperCase()) ||
+        (f.tf_package_id &&
+          f.tf_package_id.trim().toUpperCase() === cleanEpc.toUpperCase()),
     );
 
-    console.log(`matched frame??: ${matchedFrame}`)
-
     if (matchedFrame) {
+      console.log("Matched frame in local state:", matchedFrame);
       setFrameStatus({
         message: `Matched Frame: ${matchedFrame.name}`,
         isError: false,
       });
+      // Navigate directly using the internal frame package ID
       navigate(`/frames/${matchedFrame.tf_package_id}/parts`);
-    } else {
-      // Fallback: Query backend directly if tags are resolved via an RFID route
-      axios
-        .get(`/api/frame/${scannedEpc}`)
-        .then((res) => {
-          if (res.data && res.data.entity_type === "FRAME") {
-            navigate(`/frames/${res.data.entity_id}/parts`);
-          } else {
-            setFrameStatus({
-              message: `Tag ${scannedEpc} is not a valid frame tag`,
-              isError: true,
-            });
-          }
-        })
-        .catch(() => {
+      return;
+    }
+
+    // 2. Fallback: Query backend route /api/frames/:epc/parts
+    axios
+      .get(`/api/frames/${encodeURIComponent(cleanEpc)}/parts`)
+      .then((res) => {
+        const parts = res.data;
+
+        if (Array.isArray(parts) && parts.length > 0) {
+          // Extract the frame ID from the first returned part
+          const frameId = parts[0].tf_package_id;
+
           setFrameStatus({
-            message: `Frame tag not found (${scannedEpc})`,
+            message: `Frame package found (${frameId})`,
+            isError: false,
+          });
+
+          navigate(`/frames/${frameId}/parts`);
+        } else {
+          setFrameStatus({
+            message: `Tag ${cleanEpc} is not linked to any frame parts`,
             isError: true,
           });
+        }
+      })
+      .catch((err) => {
+        console.error("Frame lookup error:", err);
+        const errMsg =
+          err.response?.data?.error || `Frame tag not found (${cleanEpc})`;
+        setFrameStatus({
+          message: errMsg,
+          isError: true,
         });
-    }
+      });
   };
 
   return (
