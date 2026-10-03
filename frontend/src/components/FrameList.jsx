@@ -1,34 +1,95 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Scanner from "./Scanner";
 
 const FrameList = () => {
-  const [frames, setFrames] = useState([]);
-  const [isScanning, setIsScanning] = useState(false);
-  // const [lastScanned, setLastScanned] = useState(null);
+  // Frame List state
+  const [frameList, getFrameList] = useState([]);
   const navigate = useNavigate();
 
+  // Frame Status State
+  const [frameStatus, setFrameStatus] = useState({
+    message: "Ready for scan",
+    isError: false,
+  }); 
+  
+  // Buffer ref to collect fast HID keystrokes without causing re-renders
+  const keystrokeBuffer = useRef("");
+
   useEffect(() => {
-    // Make sure to use your Mac's IP address!
     axios
       .get(`/api/frames`)
-      .then((res) => setFrames(res.data))
-      .catch((err) => console.error(err));
+      .then((res) => getFrameList(res.data))
+      .catch((err) =>
+        console.error("Error fetching frame data from backend: ", err),
+      );
   }, []);
+ 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ignore keystrokes if the user happens to type into a regular text input or textarea
+      if (["INPUT", "TEXTAREA"].includes(e.target.tagName)) return;
 
-  const handleGlobalScan = (qrData) => {
-    console.log(`QR Scanned: ${qrData}`)
+      if (e.key === "Enter") {
+        const scannedTag = keystrokeBuffer.current.trim();
+        keystrokeBuffer.current = ""; // Reset buffer immediately
 
-    // 🔍 Search our list for a frame matching the scanned QR code
-    // Assuming your QR code contains the package name or a specific ID
-    if (qrData.startsWith('ow-tf')) {
-      alert("Bag found! Loading parts...");
-      navigate(`/frames/${qrData}/parts`)
+        if (scannedTag.length > 0) {
+          handleFrameScan(scannedTag);
+        }
+      } else if (e.key.length === 1) {
+        // Accumulate alphanumeric characters from the reader
+        keystrokeBuffer.current += e.key;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [frames]);
+
+  const handleFrameScan = (scannedEpc) => {
+    console.log(`RFID EPC Scanned: ${scannedEpc}`);
+
+    // ??
+    setFrameStatus({ message: `Scanned: ${scannedEpc}`, isError: false });
+
+    // Match against loaded frames (checking rfid_tag or polymorphic epc field)
+    const matchedFrame = frames.find(
+      (f) =>
+        f.epc === scannedEpc ||
+        f.rfid_tag_id === scannedEpc ||
+        f.tf_package_id === scannedEpc,
+    );
+
+    console.log(`matched frame??: ${matchedFrame}`)
+
+    if (matchedFrame) {
+      setFrameStatus({
+        message: `Matched Frame: ${matchedFrame.name}`,
+        isError: false,
+      });
+      navigate(`/frames/${matchedFrame.tf_package_id}/parts`);
     } else {
-      alert(`Error: No frame matches code "${qrData}"`);
+      // Fallback: Query backend directly if tags are resolved via an RFID route
+      axios
+        .get(`/api/frame/${scannedEpc}`)
+        .then((res) => {
+          if (res.data && res.data.entity_type === "FRAME") {
+            navigate(`/frames/${res.data.entity_id}/parts`);
+          } else {
+            setFrameStatus({
+              message: `Tag ${scannedEpc} is not a valid frame tag`,
+              isError: true,
+            });
+          }
+        })
+        .catch(() => {
+          setFrameStatus({
+            message: `Frame tag not found (${scannedEpc})`,
+            isError: true,
+          });
+        });
     }
-    setIsScanning(false);
   };
 
   return (
@@ -50,7 +111,7 @@ const FrameList = () => {
         }}
       >
         <button
-          onClick={() => setIsScanning(true)}
+          // onClick={() => setIsScanning(true)}
           style={{
             width: "100%",
             padding: "16px",
@@ -66,7 +127,7 @@ const FrameList = () => {
             gap: "10px",
           }}
         >
-          📷 FIND FRAME
+          SCAN
         </button>
       </header>
 
@@ -84,13 +145,13 @@ const FrameList = () => {
             Inventory
           </h1>
           <p style={{ color: "#666", fontSize: "14px" }}>
-            {frames.length} Packages Found
+            {frameList.length} Packages Found
           </p>
         </header>
 
         {/* Vertical Stack for Mobile */}
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          {frames.map((frame) => (
+          {frameList.map((frame) => (
             <div
               key={frame.tf_package_id}
               style={{
@@ -155,7 +216,7 @@ const FrameList = () => {
               <button
                 onClick={() => {
                   console.log(
-                    "Button Clicked! Navigating to ID:",
+                    "Frame selected. Navigating to Frame ID:",
                     frame.tf_package_id,
                   );
                   navigate(`/frames/${frame.tf_package_id}/parts`);
@@ -179,17 +240,8 @@ const FrameList = () => {
           ))}
         </div>
       </div>
-
-      {/* Scanner Overlay */}
-      {isScanning && (
-        <Scanner
-          onScanSuccess={handleGlobalScan}
-          onClose={() => setIsScanning(false)}
-          isLookup={true}
-        />
-      )}
     </div>
   );
-};
+};;
 
 export default FrameList;
